@@ -1,0 +1,111 @@
+
+typedef struct{
+	unsigned volatile int * RCC_CR;
+	unsigned volatile int * RCC_PLLCFGR;
+	unsigned volatile int * RCC_CFGR;
+	unsigned volatile int * RCC_CIR;
+	unsigned volatile int * RCC_AHB1RSTR;
+	unsigned volatile int * RCC_AHB2RSTR;
+	unsigned volatile int * RCC_AHB3RSTR;
+	unsigned volatile int * reserved_1;
+	unsigned volatile int * RCC_APB1RSTR;
+	unsigned volatile int * RCC_APB2RSTR;
+	unsigned volatile int * reserved_2;
+	unsigned volatile int * reserved_3;
+	unsigned volatile int * RCC_AHB1ENR;
+	unsigned volatile int * RCC_AHB2ENR;
+	unsigned volatile int * RCC_AHB3ENR;
+	unsigned volatile int * reserved_4;
+	unsigned volatile int * RCC_APB1ENR;
+	unsigned volatile int * RCC_APB2ENR;
+	unsigned volatile int * reserved_5;
+	unsigned volatile int * reserved_6;
+	unsigned volatile int * RCC_AHB1LPENR;
+	unsigned volatile int * RCC_AHB2LPENR;
+	unsigned volatile int * RCC_AHB3LPENR;
+	unsigned volatile int * reserved_7;
+	unsigned volatile int * RCC_APB1LPENR;
+	unsigned volatile int * RCC_APB2LPENR;
+	unsigned volatile int * reserved_8;
+	unsigned volatile int * reserved_9;
+	unsigned volatile int * RCC_BDCR;
+	unsigned volatile int * RCC_CSR;
+	unsigned volatile int * reserved_10;
+	unsigned volatile int * reserved_11;
+	unsigned volatile int * RCC_SSCGR;
+	unsigned volatile int * RCC_PLLI2SCFGR;
+}rcc;
+
+typedef struct{
+	unsigned volatile int * GPIOG_MODER;
+	unsigned volatile int * GPIOG_OTYPER;
+	unsigned volatile int * GPIOG_PUPDR;
+	unsigned volatile int * GPIOG_IDR;
+	unsigned volatile int * GPIOG_ODR;
+	unsigned volatile int * GPIOG_BSRR;
+	unsigned volatile int * GPIOG_LCKR;
+	unsigned volatile int * GPIOG_AFRL;
+	unsigned volatile int * GPIOG_AFRH;
+}gpiog;
+
+void init_led(){
+	rcc data_register_pointer;
+	gpiog io_register;
+	data_register_pointer.RCC_CR = 0x40023800;
+	data_register_pointer.RCC_AHB1ENR = 0x40023830;
+	*data_register_pointer.RCC_AHB1ENR = 1 << 6;
+
+	io_register.GPIOG_MODER = 0x40021800;
+	*io_register.GPIOG_MODER = 0x17000000;
+	io_register.GPIOG_ODR = 0x40021814;
+}
+
+
+void turn_name_on(){
+	rcc data_register_pointer;
+	gpiog io_register;
+	io_register.GPIOG_ODR = 0x40021814;
+		*(io_register.GPIOG_ODR) = 1 << 14;
+
+}
+
+void turn_name_off(){
+	rcc data_register_pointer;
+	gpiog io_register;
+	io_register.GPIOG_ODR = 0x40021814;
+		*(io_register.GPIOG_ODR) = 0 << 14;
+
+}
+
+void turn_surname_on(){
+	rcc data_register_pointer;
+	gpiog io_register;
+	io_register.GPIOG_ODR = 0x40021814;
+		*(io_register.GPIOG_ODR) = 1 << 13;
+}
+
+void turn_surname_off(){
+	rcc data_register_pointer;
+	gpiog io_register;
+	io_register.GPIOG_ODR = 0x40021814;
+		*(io_register.GPIOG_ODR) = 0 << 13;
+
+}
+
+
+int main(void){
+	init_led();
+	for (int i = 0; i < 8; ++i) {
+		turn_name_on();
+		for (int k = 0; k < 800000; k++);
+		turn_name_off();
+		for (int k = 0; k < 800000; k++);
+	}
+	for (int i = 0; i < 5; ++i) {
+			turn_surname_on();
+			for (int k = 0; k < 800000; k++);
+			turn_surname_off();
+			for (int k = 0; k < 800000; k++);
+	}
+
+}
